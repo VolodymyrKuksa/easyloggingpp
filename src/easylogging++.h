@@ -1970,14 +1970,14 @@ class TypedConfigurations : public base::threading::ThreadSafe {
     ELPP_UNUSED(confName);
     typename std::unordered_map<Level, Conf_T>::const_iterator it = confMap->find(level);
     if (it == confMap->end()) {
-      try {
-        return confMap->at(Level::Global);
-      } catch (...) {
+      auto globalIt = confMap->find(Level::Global);
+      if (globalIt == confMap->end()) {
         ELPP_INTERNAL_ERROR("Unable to get configuration [" << confName << "] for level ["
                             << LevelHelper::convertToString(level) << "]"
                             << std::endl << "Please ensure you have properly configured logger.", false);
         return Conf_T();
       }
+      return globalIt->second;
     }
     return it->second;
   }
@@ -1987,13 +1987,13 @@ class TypedConfigurations : public base::threading::ThreadSafe {
     ELPP_UNUSED(confName);
     typename std::unordered_map<Level, Conf_T>::iterator it = confMap->find(level);
     if (it == confMap->end()) {
-      try {
-        return confMap->at(Level::Global);
-      } catch (...) {
+      auto globalIt = confMap->find(Level::Global);
+      if (globalIt == confMap->end()) {
         ELPP_INTERNAL_ERROR("Unable to get configuration [" << confName << "] for level ["
                             << LevelHelper::convertToString(level) << "]"
                             << std::endl << "Please ensure you have properly configured logger.", false);
       }
+      return globalIt->second;
     }
     return it->second;
   }
